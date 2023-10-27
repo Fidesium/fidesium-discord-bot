@@ -1,0 +1,22 @@
+{
+  "name": "fidesium-discord-bot",
+  "version": "1.0.0",
+  "description": "Fidesium Discord Bot",
+  "main": "dist/client.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "start-dev": "node .",
+    "build": "rm -rf dist && tsc",
+    "prestart-dev": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
