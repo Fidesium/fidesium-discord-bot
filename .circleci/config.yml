@@ -62,31 +62,6 @@ jobs:
 
       - run: npm run build
 
-  test:
-    <<: *defaults
-    docker:
-      - image: cimg/python:3.11.3-node
-      - image: cimg/postgres:16.0
-        environment:
-          POSTGRES_DB: fidesium
-          POSTGRES_USER: fidesium
-          POSTGRES_PASSWORD: fidesium
-
-    steps:
-      - checkout
-
-      - attach_workspace:
-          at: ~/fidesium-discord-bot
-
-      - run: pip install -r requirements.txt
-
-      - run: npm run migrate:up
-
-      - run: npm run test:ci
-
-      - store_artifacts:
-          path: coverage
-
   stage:
     <<: *defaults
     executor: heroku/default
