@@ -20,9 +20,9 @@ app.use('/health', (_: Request, response: Response) => {
 
 app.use(express.json({ verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_KEY) }));
 
-app.post('/interactions', async (req, res) => {
+app.post('/interactions', (req, res) => {
     // Interaction type and data
-    const { type, id, data } = req.body
+    const { type, data } = req.body
     const { name } = data
     if ((type === InteractionType.PING) || (type === undefined)) {
         return res.send({ type: InteractionResponseType.PONG });
@@ -40,8 +40,8 @@ app.post('/interactions', async (req, res) => {
         } else {
             console.log(name)
         }
-
     }
+    return res.send(400)
 })
 
 app.listen(PORT, () => {

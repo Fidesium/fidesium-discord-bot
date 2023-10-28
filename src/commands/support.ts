@@ -7,7 +7,7 @@ const supportCommand = {
     data: new SlashCommandBuilder()
         .setName('support')
         .setDescription('Get a link to Fidesium Bot\'s support server'),
-    async execute(_: Interaction) {},
+    async execute(_: Interaction): Promise<void> {},
 };
 
 export {supportCommand}

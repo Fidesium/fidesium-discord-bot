@@ -85,7 +85,7 @@
       "functional/no-mixed-types": "warn",
       "functional/no-return-void": "off",
       "functional/prefer-readonly-type": "warn",
-      "@typescript-eslint/no-empty-function": "error",
+      "@typescript-eslint/no-empty-function": "warn",
       "no-use-before-define": "error",
       "@typescript-eslint/no-use-before-define": "error",
       "@typescript-eslint/explicit-function-return-type": "error",

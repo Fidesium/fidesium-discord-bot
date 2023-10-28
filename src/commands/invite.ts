@@ -7,7 +7,7 @@ const inviteCommand = {
     data: new SlashCommandBuilder()
         .setName('invite')
         .setDescription('Get a link to invite me to your server'),
-    async execute(_: Interaction) {},
+    async execute(_: Interaction): Promise<void> {},
 };
 
 export {inviteCommand}
