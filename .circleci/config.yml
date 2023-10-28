@@ -4,7 +4,6 @@
 #
 version: 2.1
 orbs:
-  discord: antonioned/discord@0.1.0
   heroku: circleci/heroku@2.0.0
 defaults: &defaults
   working_directory: ~/fidesium-discord-bot
@@ -38,11 +37,6 @@ jobs:
           root: ~/fidesium-discord-bot
           paths:
             - node_modules
-        
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
 
   lint:
     <<: *defaults
@@ -56,11 +50,6 @@ jobs:
 
       - run: npm run lint
 
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
-
   build:
     <<: *defaults
     docker:
@@ -72,11 +61,6 @@ jobs:
           at: ~/fidesium-discord-bot
 
       - run: npm run build
-
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
 
   test:
     <<: *defaults
@@ -103,11 +87,6 @@ jobs:
       - store_artifacts:
           path: coverage
 
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
-
   stage:
     <<: *defaults
     executor: heroku/default
@@ -117,10 +96,6 @@ jobs:
       - heroku/deploy-via-git:
           branch: 'main'
           app-name: $HEROKU_STAGING_APP_NAME
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
 
   deploy:
     <<: *defaults
@@ -130,17 +105,7 @@ jobs:
       - heroku/install
       - heroku/deploy-via-git:
           branch: 'main'
-      - discord/status:
-          fail_only: true
-          failure_message: "Triggered by: **${CIRCLE_USERNAME}** \\n\\n Ooops! The **$CIRCLE_JOB** job has failed!"
-          only_for_branches: 'main'
 
-  notify-discord:
-    <<: *defaults
-    docker:
-      - image: cimg/base:2022.04-20.04
-    steps:
-      - discord/status
 
 workflows:
   fidesium-discord-bot:
@@ -165,12 +130,6 @@ workflows:
       - deploy:
           requires:
             - stage
-          filters:
-            branches:
-              only: main
-      - notify-discord:
-          requires:
-            - deploy
           filters:
             branches:
               only: main
