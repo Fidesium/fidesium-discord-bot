@@ -23,7 +23,7 @@ app.use(express.json({ verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_K
 app.post('/interactions', (req, res) => {
     // Interaction type and data
     const { type, data } = req.body
-    const { name } = data
+    const name = data && data.name
     if ((type === InteractionType.PING) || (type === undefined)) {
         return res.send({ type: InteractionResponseType.PONG });
     }
