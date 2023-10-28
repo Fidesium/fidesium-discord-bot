@@ -10,21 +10,21 @@ const initializeClient = async () => {
     const rest = new REST().setToken(TOKEN);
     client.on('ready', () => {
         console.log(`Logged in as ${client.user.tag}!`);
-      });
+    });
       
-      client.on('interactionCreate', async interaction => {
+    client.on('interactionCreate', async interaction => {
         if (!interaction.isChatInputCommand()) return;
       
         if (interaction.commandName === 'ping2') {
-          await interaction.reply('Pong!');
+            await interaction.reply('Pong!');
         }
-      });
-      await rest.put(
+    });
+    await rest.put(
         //@ts-ignore
         Routes.applicationCommands(CLIENT_ID),
         { body: [inviteCommand.data, supportCommand.data, verifyCommand.data] },
     );
-      client.login(TOKEN);
+    client.login(TOKEN);
 }
 
 export {initializeClient}

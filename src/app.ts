@@ -3,7 +3,7 @@ import { verifyDiscordRequest } from './utils/verifyDiscordRequest.js';
 import {
     InteractionType,
     InteractionResponseType
-  } from 'discord-interactions';
+} from 'discord-interactions';
 import { initializeClient } from './client.js';
 import { inviteHandler } from './commandHandlers/invite.js';
 import { supportHandler } from './commandHandlers/support.js';
@@ -15,7 +15,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/health', (_: Request, response: Response) => {
-	response.sendStatus(204);
+    response.sendStatus(204);
 });
 
 app.use(express.json({ verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_KEY) }));
@@ -26,7 +26,7 @@ app.post('/interactions', async (req, res) => {
     const { name } = data
     if ((type === InteractionType.PING) || (type === undefined)) {
         return res.send({ type: InteractionResponseType.PONG });
-      }
+    }
     if (type === InteractionType.APPLICATION_COMMAND) {
         if (name === 'invite') {
             const response = inviteHandler()
