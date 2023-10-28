@@ -22,7 +22,7 @@ app.use(express.json({ verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_K
 
 app.post('/interactions', (req, res) => {
     // Interaction type and data
-    const { type, data } = req.body
+    const { type, data, guild_id } = req.body
     const name = data && data.name
     if ((type === InteractionType.PING) || (type === undefined)) {
         return res.send({ type: InteractionResponseType.PONG });
@@ -35,7 +35,7 @@ app.post('/interactions', (req, res) => {
             const response = supportHandler()
             return res.send(response)
         } else if (name === 'verify') {
-            const response = verifyHandler()
+            const response = verifyHandler(guild_id, '1167769339164885063')
             return res.send(response)
         } else {
             console.log(name)
