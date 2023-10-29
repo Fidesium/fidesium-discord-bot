@@ -18,6 +18,8 @@ import { configureRoleHandler } from './commandHandlers/configureRoleHandler.js'
 import { configureRoleComponentHandler } from './commandHandlers/configureRoleComponentHandler.js';
 import { configureDmMessageHandler } from './commandHandlers/configureDmMessageHandler.js';
 import { configureDmMessageModalSubmission } from './commandHandlers/configureDmMessageModalSubmission.js';
+import { helpHandler } from './commandHandlers/helpHandler.js';
+import { isAddress } from 'web3-validator';
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -76,14 +78,27 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
         const memberPermission = req.body.member.permissions
         const hasManageRoles = calculate('MANAGE_ROLES', memberPermission)
         if (type === InteractionType.MODAL_SUBMIT) {
-            if(req.body?.data?.components[0]?.components[0]?.custom_id === 'dm_message_selector') {
+            if(req.body?.data?.components[0]?.components[0]?.custom_id === 'check_contract_selector') {
+                if (isAddress(req.body?.data?.components[0]?.components[0]?.value)) {
+                    const responseData = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: req.body?.data?.components[0]?.components[0]?.value}})
+                    const responseJson: any = await responseData.json()
+                    const riskScore = responseJson.risks.risks.totalRisk
+                    const PoHVerified = responseJson.creatorPoH
+                    const PoHString = PoHVerified ? 'has' : 'has not'
+                    const contract = responseJson.contract
+                    const response = checkContractModalSubmitHandler(riskScore, PoHString, contract)
+                    return res.send(response)
+                  } else {
+                    return res.send(400)
+                  }
+            } else if(req.body?.data?.components[0]?.components[0]?.custom_id === 'dm_message_selector') {
                 if (!hasManageRoles) {
                     res.send(400)
                 } else {
                     const savedMessageResponse = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/discord/dm_message`, {json: {guild_id, dm_message: req.body?.data?.components[0]?.components[0]?.value}})
                     const savedMessageJson: Readonly<{dmMessage: string}> = await savedMessageResponse.json()
                     const response = configureDmMessageModalSubmission(savedMessageJson.dmMessage)
-                    res.send(response)
+                    return res.send(response)
                 }
             }
         } else if (type === InteractionType.MESSAGE_COMPONENT) {
@@ -137,7 +152,12 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
                     return res.send(response)
                 }
             } else if (name === 'help') {
-                // console.log(req.body)
+                const response = helpHandler()
+                return res.send(response)
+            } else if (name === 'check') {
+                const response = checkHandler()
+                return res.send(response)
+            }
             } else {
                 console.log(name)
             }
@@ -163,3 +183,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   });
 
 initializeClient()
+function checkContractModalSubmitHandler(riskScore: any, PoHString: string, contract: any) {
+    throw new Error('Function not implemented.');
+}
+
