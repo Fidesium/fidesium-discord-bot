@@ -1,14 +1,14 @@
-import { InteractionResponseFlags, InteractionResponseType, MessageComponent, MessageComponentTypes } from "discord-interactions";
+import { InteractionResponseFlags, InteractionResponseType, MessageComponentTypes } from "discord-interactions";
 
 const configureRoleHandler = (): Readonly<{
     readonly type: InteractionResponseType,
     readonly data: Readonly<{
         readonly content: string,
-        components: ReadonlyArray<Readonly<{
-            type: number,
-            components: ReadonlyArray<{
-                custom_id: string,
-                type: number
+        readonly components: ReadonlyArray<Readonly<{
+            readonly type: number,
+            readonly components: ReadonlyArray<{
+                readonly custom_id: string,
+                readonly type: number
             }>
         }>>,
         readonly flags: number

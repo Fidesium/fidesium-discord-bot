@@ -1,18 +1,18 @@
-import { InteractionResponseFlags, InteractionResponseType, MessageComponent, MessageComponentTypes } from "discord-interactions";
+import { InteractionResponseFlags, InteractionResponseType, MessageComponentTypes } from "discord-interactions";
 
 const checkHandler = (): Readonly<{
     readonly type: InteractionResponseType,
     readonly data: Readonly<{
         readonly title: string,
         readonly custom_id: string,
-        components: ReadonlyArray<Readonly<{
-            type: number,
-            components: ReadonlyArray<{
-                custom_id: string,
-                type: number,
-                style: number,
-                label: string,
-                required: boolean
+        readonly components: ReadonlyArray<Readonly<{
+            readonly type: number,
+            readonly components: ReadonlyArray<{
+                readonly custom_id: string,
+                readonly type: number,
+                readonly style: number,
+                readonly label: string,
+                readonly required: boolean
             }>
         }>>,
         readonly flags: number

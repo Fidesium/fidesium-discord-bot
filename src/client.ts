@@ -21,32 +21,32 @@ const initializeClient = async (): Promise<void> => {
     });
    
     client.on('guildMemberAdd', async (member) => {
-      try{
-        const welcomeMessageResponse = await ky.get(`${process.env.FIDESIUM_URL}/api/v0/discord/${member.guild.id}/dm_message`)
-        const welcomeMessageJson: Readonly<{dm_message: string}> = await welcomeMessageResponse.json()
-        //@ts-ignore
-        member.guild.channels.get('channelID').send(welcomeMessageJson.dm_message); 
-      } catch (e) {
-        Sentry.captureException(e)
-      }
+        try{
+            const welcomeMessageResponse = await ky.get(`${process.env.FIDESIUM_URL}/api/v0/discord/${member.guild.id}/dm_message`)
+            const welcomeMessageJson: Readonly<{readonly dm_message: string}> = await welcomeMessageResponse.json()
+            //@ts-ignore
+            member.guild.channels.get('channelID').send(welcomeMessageJson.dm_message); 
+        } catch (e) {
+            Sentry.captureException(e)
+        }
     });
 
 
 
-    client.on('message', async (message) => {
-      try {
+    client.on('message', async (message): Promise<any> => {
+        try {
         // const contentList = message.content.split(' ')
-        if (isAddress(message.content)) {
-          const responseData = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: message.content}})
-          const responseJson: any = await responseData.json()
-          const riskScore = responseJson.risks.risks.totalRisk
-          const PoHVerified = responseJson.creatorPoH
-          const PoHString = PoHVerified ? 'has' : 'has not'
-          const contract = responseJson.contract
-          return message.reply(`This asset has been risked by Fidesium. The total risk is ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://fidesium-token-lookup-prod.herokuapp.com/token/${contract}`)
-        } else {
-          return
-        }
+            if (isAddress(message.content)) {
+                const responseData = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: message.content}})
+                const responseJson: any = await responseData.json()
+                const riskScore = responseJson.risks.risks.totalRisk
+                const PoHVerified = responseJson.creatorPoH
+                const PoHString = PoHVerified ? 'has' : 'has not'
+                const contract = responseJson.contract
+                return message.reply(`This asset has been risked by Fidesium. The total risk is ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://app.fidesium.xyz/token/${contract}`)
+            } else {
+                return null
+            }
         // const matchedPromises = await Promise.allSettled(contentList.map((content: string) => {
         //   if (isAddress(content)) {
         //     return ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: content}})
@@ -54,23 +54,23 @@ const initializeClient = async (): Promise<void> => {
         //     null
         //   }
         // }))
-      } catch (e) {
-        Sentry.captureException(e)
-      }
+        } catch (e) {
+            Sentry.captureException(e)
+        }
     })
 
     await rest.put(
         //@ts-ignore
         Routes.applicationCommands(CLIENT_ID),
         { body: [
-          inviteCommand.data,
-          supportCommand.data,
-          verifyCommand.data,
-          configureRoleCommand.data,
-          configureDmMessageCommand.data,
-          configureDmPromptCommand.data,
-          helpCommand.data,
-          checkCommand.data
+            inviteCommand.data,
+            supportCommand.data,
+            verifyCommand.data,
+            configureRoleCommand.data,
+            configureDmMessageCommand.data,
+            configureDmPromptCommand.data,
+            helpCommand.data,
+            checkCommand.data
         ] },
     );
     client.login(TOKEN);

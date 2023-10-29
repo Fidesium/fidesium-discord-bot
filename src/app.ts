@@ -20,6 +20,8 @@ import { configureDmMessageHandler } from './commandHandlers/configureDmMessageH
 import { configureDmMessageModalSubmission } from './commandHandlers/configureDmMessageModalSubmission.js';
 import { helpHandler } from './commandHandlers/helpHandler.js';
 import { isAddress } from 'web3-validator';
+import { checkHandler } from './commandHandlers/checkHandler.js';
+import { checkContractModalSubmitHandler } from './commandHandlers/checkContractModalSubmitHandler.js';
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -88,15 +90,15 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
                     const contract = responseJson.contract
                     const response = checkContractModalSubmitHandler(riskScore, PoHString, contract)
                     return res.send(response)
-                  } else {
+                } else {
                     return res.send(400)
-                  }
+                }
             } else if(req.body?.data?.components[0]?.components[0]?.custom_id === 'dm_message_selector') {
                 if (!hasManageRoles) {
                     res.send(400)
                 } else {
                     const savedMessageResponse = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/discord/dm_message`, {json: {guild_id, dm_message: req.body?.data?.components[0]?.components[0]?.value}})
-                    const savedMessageJson: Readonly<{dmMessage: string}> = await savedMessageResponse.json()
+                    const savedMessageJson: Readonly<{readonly dmMessage: string}> = await savedMessageResponse.json()
                     const response = configureDmMessageModalSubmission(savedMessageJson.dmMessage)
                     return res.send(response)
                 }
@@ -120,7 +122,7 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
                 return res.send(response)
             } else if (name === 'verify') {
                 const roleIdResponse = await ky.get(`${process.env.FIDESIUM_URL}/api/v0/discord/${guild_id}/role`)
-                const roleIdJson: Readonly<{roleId: string}> = await roleIdResponse.json()
+                const roleIdJson: Readonly<{readonly roleId: string}> = await roleIdResponse.json()
                 const roleId = roleIdJson.roleId
                 if((roleId !== undefined) && (roleId !== null)) {
                     const response = verifyHandler(guild_id, roleId)
@@ -140,7 +142,7 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
                     res.send(400)
                 } else {
                     const dmStatus = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/discord/dm_prompt`, {json: {guild_id}})
-                    const dmStatusJson: Readonly<{dmStatus: boolean}> = await dmStatus.json()
+                    const dmStatusJson: Readonly<{readonly dmStatus: boolean}> = await dmStatus.json()
                     const response = configureDmPromptHandler(dmStatusJson.dmStatus)
                     return res.send(response)
                 }
@@ -157,7 +159,6 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
             } else if (name === 'check') {
                 const response = checkHandler()
                 return res.send(response)
-            }
             } else {
                 console.log(name)
             }
@@ -180,10 +181,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     // and optionally displayed to the user for support.
     console.log(err)
     res.status(500).send()
-  });
+});
 
 initializeClient()
-function checkContractModalSubmitHandler(riskScore: any, PoHString: string, contract: any) {
-    throw new Error('Function not implemented.');
-}
 
