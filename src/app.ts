@@ -21,7 +21,7 @@ import { configureDmMessageModalSubmission } from './commandHandlers/configureDm
 import { helpHandler } from './commandHandlers/helpHandler.js';
 import { isAddress } from 'web3-validator';
 import { checkHandler } from './commandHandlers/checkHandler.js';
-import { checkContractModalSubmitHandler } from './commandHandlers/checkContractModalSubmitHandler.js';
+import { checkContractModalSubmitDeferrer } from './commandHandlers/checkContractModalSubmitDeferrer.js';
 
 if (process.env.NODE_ENV === 'production') {
     Sentry.init({
@@ -82,14 +82,18 @@ app.post('/interactions', async (req: Request, res: Response, next: NextFunction
         if (type === InteractionType.MODAL_SUBMIT) {
             if(req.body?.data?.components[0]?.components[0]?.custom_id === 'check_contract_selector') {
                 if (isAddress(req.body?.data?.components[0]?.components[0]?.value)) {
-                    const responseData = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: req.body?.data?.components[0]?.components[0]?.value}})
-                    const responseJson: any = await responseData.json()
-                    const riskScore = responseJson.risks.risks.totalRisk
-                    const PoHVerified = responseJson.creatorPoH
-                    const PoHString = PoHVerified ? 'has' : 'has not'
-                    const contract = responseJson.contract
-                    const response = checkContractModalSubmitHandler(riskScore, PoHString, contract)
+                    const response = checkContractModalSubmitDeferrer(req.body?.data?.components[0]?.components[0]?.value)
                     return res.send(response)
+                    // res.send(firstResponse)
+                    // const responseData = await ky.post(`${process.env.FIDESIUM_URL}/api/v0/0x1/contract`, {json: {contract: req.body?.data?.components[0]?.components[0]?.value}})
+                    // const responseJson: any = await responseData.json()
+                    // const riskScore = responseJson.risks.risks.totalRisk
+                    // const PoHVerified = responseJson.creatorPoH
+                    // const PoHString = PoHVerified ? 'has' : 'has not'
+                    // const contract = responseJson.contract
+                    // const response = checkContractModalSubmitHandler(riskScore, PoHString, contract)
+                    
+                    // return ky.patch(`https://discordapp.com/api/webhooks/${process.env.DISCORD_CLIENT_ID}/${interactionToken}/@original`, {json: response})
                 } else {
                     return res.send(400)
                 }
