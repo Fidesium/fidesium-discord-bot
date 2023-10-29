@@ -43,7 +43,7 @@ const initializeClient = async (): Promise<void> => {
                 const PoHVerified = responseJson.creatorPoH
                 const PoHString = PoHVerified ? 'has' : 'has not'
                 const contract = responseJson.contract
-                return message.reply(`This asset has been risked by Fidesium. The total risk is ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://app.fidesium.xyz/token/${contract}`)
+                return message.reply(`This asset has been risked by Fidesium. The total risk is ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://fidesium-token-lookup-prod.herokuapp.com/${contract}`)
             } else {
                 return null
             }

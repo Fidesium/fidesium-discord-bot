@@ -10,7 +10,7 @@ const checkContractModalSubmitHandler = (riskScore: number, PoHString: string, c
     return {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-            content: `This asset has been risked by Fidesium. The total risk is ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://app.fidesium.xyz/token/${contract}`,
+            content: `Total Fidesium score: ${riskScore}. The deployer ${PoHString} been verified by Rarimo. For a full risk breakdown, please visit: https://fidesium-token-lookup-prod.herokuapp.com/token/${contract}`,
             flags: InteractionResponseFlags.EPHEMERAL
         },
     };
